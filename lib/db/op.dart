@@ -15,9 +15,9 @@ class Op {
         options: OpenDatabaseOptions(
           onCreate: (db, version) {
             return db.execute(
-                "CREATE TABLE info (id INTEGER PRIMARY KEY, nombre TEXT, apellido TEXT)");
+                "CREATE TABLE info (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nombre TEXT, apellido TEXT)");
           },
-          version: 1,
+          version: 2,
         ));
 
     /*var databasesPath = await getDatabasesPath();

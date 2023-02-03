@@ -1,9 +1,9 @@
 class Nota {
-  int id;
+  int? id;
   String Nombre;
   String Apellido;
 
-  Nota({required this.id, required this.Nombre, required this.Apellido});
+  Nota({this.id, required this.Nombre, required this.Apellido});
 
   Nota.empty(this.id, this.Nombre, this.Apellido);
 

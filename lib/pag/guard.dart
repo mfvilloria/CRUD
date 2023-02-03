@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 
 import '../db/op.dart';
 
-class SavePage extends StatelessWidget {
+class SavePage extends StatefulWidget {
   static const String ROUTE = "/save";
 
+  @override
+  State<SavePage> createState() => _SavePageState();
+}
+
+class _SavePageState extends State<SavePage> {
   final _FKey = GlobalKey<FormState>();
   final NControler = TextEditingController();
   final AControler = TextEditingController();
-  final IControler = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +29,36 @@ class SavePage extends StatelessWidget {
     );
   }
 
+  void showMyDialog(){
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Registro modificado con exitó.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                NControler.text = "";
+                AControler.text = "";
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   _init(Nota nota) {
     NControler.text = nota.Nombre;
     AControler.text = nota.Apellido;
-    IControler.text = (nota.id).toString();
   }
 
   Widget _buildForm(Nota nota) {
@@ -38,21 +68,6 @@ class SavePage extends StatelessWidget {
           key: _FKey,
           child: Column(
             children: <Widget>[
-              TextFormField(
-                  controller: IControler,
-                  validator: (value) {
-                    if (value == null || int.tryParse(value) == 0) {
-                      return "Ingrese informacion diferente a 0.";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: "Identificacion",
-                    border: OutlineInputBorder(),
-                  )),
-              SizedBox(
-                height: 20,
-              ),
               TextFormField(
                   controller: NControler,
                   validator: (value) {
@@ -89,27 +104,21 @@ class SavePage extends StatelessWidget {
                   ),
                   onPressed: () {
                     if (_FKey.currentState!.validate()) {
-                      if (nota.id != 0) {
+                      if (nota.id != null) {
                         //actualizar
                         nota.Nombre = NControler.text;
                         nota.Apellido = AControler.text;
                         print("Estoy editando " + (nota.id).toString());
                         Op.update(nota);
-                        IControler.text = "";
-                        NControler.text = "";
-                        AControler.text = "";
-
+                        showMyDialog();
                       } else {
                         //insertar
-                          Op.insert(Nota(
-                              id: int.parse(IControler.text),
-                              Nombre: NControler.text,
-                              Apellido: AControler.text));
-                          print("Ya inserte");
-                          IControler.text = "";
-                          NControler.text = "";
-                          AControler.text = "";
-
+                        Op.insert(Nota(
+                            Nombre: NControler.text,
+                            Apellido: AControler.text));
+                        print("Ya inserte");
+                        NControler.text = "";
+                        AControler.text = "";
                       }
                       //print("valor Nombre: " +NControler.text+ " y apellido: " +AControler.text);
 
